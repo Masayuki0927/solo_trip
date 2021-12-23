@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<div class="alert alert-dark" role="alert">
+    <h2>投稿詳細</h2>
+</div>
+{% endblock header %}
+
+{% block content %}
+
+<div class="alert alert-success" role="alert">
+<p>{{ object.title }}</p>
+<p>{{ object.content }}</p>
+<a href="{% url 'good' object.pk %}" role="button" aria-pressed="true">いいねする</a>
+<!-- <p>{{ object.user_id }}</p> -->
+</div>
+
+<p><a href="{% url 'home'  %}">ホームに戻る</a></p>
+
+{% endblock content %}

@@ -1,0 +1,9 @@
+<p>{{ object.username }}</p>
+<p>{{ object.email }}</p>
+
+<p><a href="{% url 'home' %}">ホームへ戻る</a></p>
+
+{% for item in object.post_set.all %}
+<p>{{ item.title }}</p>
+<p>{{ item.content }}</p>
+{% endfor %}

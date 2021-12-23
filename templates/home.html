@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <div class="bg-light p-3 p-sm-4 my-3 rounded">
+      <h1 class="display-4">Home</h1>
+    </div>
+
+{% endblock header %}
+
+{% block content %}
+<p><a href="{% url 'mypage' %}">マイページへ移動</a></p>
+<p><a href="{% url 'board' %}">掲示版</a></p>
+<a class="btn btn-secondary mb-3" href="{% url 'create' %}" role="button">新規投稿</a>
+
+{% for item in object %}
+
+<p><a href="{% url 'detail' item.pk %}">{{ item.title }}</a></p>
+<p>{{ item.content }}</p>
+<p>いいね{{ item.good }}</p>
+
+{% endfor %}
+
+{% endblock content %}

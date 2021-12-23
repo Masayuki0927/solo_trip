@@ -1,0 +1,14 @@
+<h2>掲示版を作成</h2>
+<form action ='', method="POST">{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value='作成'>
+</form>
+
+<p><a href="{% url 'home' %}">ホームへ戻る</a></p>
+
+{% for item in object %}
+
+<a href="{% url 'content' item.pk %}">{{ item.title }}</a>
+<p>{{ item.created_date }}</p>
+
+{% endfor %}
