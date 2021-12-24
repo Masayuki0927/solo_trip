@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import homefunc, createfunc, detailfunc, signupfunc, loginfunc,\
-    logoutfunc, mypagefunc, boardfunc, contentfunc, goodfunc
+    logoutfunc, boardfunc, contentfunc, goodfunc, profilefunc, followfunc, unfollowfunc
 
 urlpatterns = [
     path('home/', homefunc, name='home'),
@@ -9,8 +9,10 @@ urlpatterns = [
     path('signup/', signupfunc, name='signup'),
     path('account/login/', loginfunc, name='login'),
     path('logout/', logoutfunc, name='logout'),
-    path('mypage/', mypagefunc, name='mypage'),
+    path('profile/<username>', profilefunc, name='profile'),
     path('board/', boardfunc, name='board'),
     path('content/<int:pk>', contentfunc, name='content'),
     path('good/<int:pk>', goodfunc, name='good'),
+    path('follow/<username>', followfunc, name='follow'),
+    path('unfollow/<username>', unfollowfunc, name='unfollow'),
 ]

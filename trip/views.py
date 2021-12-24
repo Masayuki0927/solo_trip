@@ -1,6 +1,6 @@
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
-from .models import Board, CustomUser, Post, Board_content
+from .models import Board, CustomUser, Post, Board_content, Follow
 from .forms import PostForm, SignUpForm, BoardForm, ContentForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
@@ -38,12 +38,20 @@ def logoutfunc(request):
     return redirect('login')
 
 @login_required
-def mypagefunc(request):
-    user_id = request.user.id
-    object = CustomUser.objects.filter(id__exact = user_id)[0]
-
-    return render(request, 'mypage.html', {'object':object})
-
+def profilefunc(request, username):
+    object = CustomUser.objects.filter(username__exact = username)[0]
+    follower_count = object.do_follow_user.all().count()
+    followerd_count = object.accept_follow_user.all().count()
+    if username == request.user.username:
+        return render(request, 'mypage.html', {'object':object, 'follower_count':follower_count, 'followerd_count':followerd_count})
+    else:
+        user = request.user
+        for item in user.do_follow_user.all():
+            if username == item.followerd.username:
+                follow = True
+                return render(request, 'profile.html', {'object':object, 'follow':follow, 'follower_count':follower_count,'followerd_count':followerd_count})
+        follow = False
+    return render(request, 'profile.html', {'object':object, 'follow':follow, 'follower_count':follower_count, 'followerd_count':followerd_count})
 
 
 @login_required
@@ -103,9 +111,22 @@ def contentfunc(request, pk):
         form = ContentForm()
     return render(request, 'content.html', {'form': form, 'board':board, 'object':object})
 
-
+@login_required
 def goodfunc(request, pk):
     object = Post.objects.get(pk=pk)
     object.good =  object.good + 1
     object.save()
     return redirect('home')
+
+@login_required
+def followfunc(request, username):
+    alluser = CustomUser.objects.all()
+    object = Follow(follower=request.user, followerd=alluser.filter(username = username)[0])
+    object.save()
+    return redirect('profile', username = username)
+    
+@login_required
+def unfollowfunc(request, username):
+    alluser = CustomUser.objects.all()
+    object = Follow.objects.filter(follower = request.user, followerd = alluser.filter(username = username)[0])[0].delete()
+    return redirect('profile', username = username)

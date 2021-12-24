@@ -1,0 +1,19 @@
+<p>{{ object.username }}</p>
+<p>{{ object.email }}</p>
+<p>フォロー数：{{ follower_count }}</p>
+<p>フォロワー数：{{ followerd_count }}</p>
+
+{% if follow == True %}
+    <p>フォロー中</p>
+    <a class="btn btn-secondary mb-3" href="{% url 'unfollow' object.username %}" role="button">フォロー解除する</a>
+{% else %}
+    <a class="btn btn-secondary mb-3" href="{% url 'follow' object.username %}" role="button">フォローする</a>
+{% endif %}
+
+<p><a href="{% url 'home' %}">ホームへ戻る</a></p>
+
+{% for item in object.post_set.all %}
+<p>{{ item.title }}</p>
+<p>{{ item.content }}</p>
+
+{% endfor %}

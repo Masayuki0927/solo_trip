@@ -6,6 +6,10 @@ from django.db.models.fields import TextField
 class CustomUser(AbstractUser):
 	age = models.CharField(max_length=10)
 
+class Follow(models.Model):
+    follower = models.ForeignKey(get_user_model( ), on_delete=models.CASCADE, related_name = 'do_follow_user', blank=True, null=True)
+    followerd = models.ForeignKey(get_user_model( ), on_delete=models.CASCADE, related_name = 'accept_follow_user' , blank=True, null=True) 
+
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
@@ -27,3 +31,4 @@ class Board_content(models.Model):
     created_date = models.DateTimeField()
     user = models.ForeignKey(get_user_model( ), on_delete=models.CASCADE, default=None, blank=True, null=True)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, default=None, blank=True, null=True)
+

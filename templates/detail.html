@@ -9,6 +9,7 @@
 {% block content %}
 
 <div class="alert alert-success" role="alert">
+<p><a href="{% url 'profile' object.person %}" >{{ object.person }}</a></p>
 <p>{{ object.title }}</p>
 <p>{{ object.content }}</p>
 <a href="{% url 'good' object.pk %}" role="button" aria-pressed="true">いいねする</a>

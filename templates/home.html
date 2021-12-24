@@ -8,7 +8,7 @@
 {% endblock header %}
 
 {% block content %}
-<p><a href="{% url 'mypage' %}">マイページへ移動</a></p>
+<p><a href="{% url 'profile' user.username %}">マイページへ移動</a></p>
 <p><a href="{% url 'board' %}">掲示版</a></p>
 <a class="btn btn-secondary mb-3" href="{% url 'create' %}" role="button">新規投稿</a>
 
@@ -19,5 +19,7 @@
 <p>いいね{{ item.good }}</p>
 
 {% endfor %}
+
+<p><a href="{% url 'logout' %}">ログアウト</a></p>
 
 {% endblock content %}

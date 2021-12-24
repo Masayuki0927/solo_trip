@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Board, Board_content, CustomUser, Post
+from .models import Board, Board_content, CustomUser, Post, Follow
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -12,3 +12,4 @@ admin.site.register(CustomUser, UserAdmin)
 admin.site.register(Post)
 admin.site.register(Board)
 admin.site.register(Board_content)
+admin.site.register(Follow)
