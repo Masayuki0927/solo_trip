@@ -32,3 +32,8 @@ class Board_content(models.Model):
     user = models.ForeignKey(get_user_model( ), on_delete=models.CASCADE, default=None, blank=True, null=True)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, default=None, blank=True, null=True)
 
+class Message(models.Model):
+    text = TextField()
+    created_date = models.DateTimeField()
+    user_from = models.ForeignKey(get_user_model( ), on_delete=models.CASCADE, related_name = 'message_from', blank=True, null=True)
+    user_to = models.ForeignKey(get_user_model( ), on_delete=models.CASCADE, related_name = 'message_to' , blank=True, null=True) 

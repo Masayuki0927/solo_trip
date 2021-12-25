@@ -1,11 +1,19 @@
-<p>{{ object.username }}</p>
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="alert alert-success" role="alert">
+<p><h1>{{ object.username }}</p></h1>
 <p>{{ object.email }}</p>
 <p>フォロー数：{{ follower_count }}</p>
 <p>フォロワー数：{{ followerd_count }}</p>
-
 <p><a href="{% url 'home' %}">ホームへ戻る</a></p>
+</div>
 
 {% for item in object.post_set.all %}
-<p>{{ item.title }}</p>
+<div class="alert alert-success" role="alert">
+<p><a href="{% url 'detail' item.pk %}">{{ item.title }}</a></p>
 <p>{{ item.content }}</p>
+</div>
 {% endfor %}
+
+{% endblock content %}

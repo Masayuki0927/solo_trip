@@ -1,11 +1,12 @@
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
-from .models import Board, CustomUser, Post, Board_content, Follow
+from .models import Board, CustomUser, Message, Post, Board_content, Follow
 from .forms import PostForm, SignUpForm, BoardForm, ContentForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 import datetime
+from django.db.models import Q
 
 def signupfunc(request):
     if request.method == "POST":
@@ -49,6 +50,10 @@ def profilefunc(request, username):
         for item in user.do_follow_user.all():
             if username == item.followerd.username:
                 follow = True
+                for followitem in object.do_follow_user.all():
+                    if followitem.followerd == request.user:
+                        followed = True
+                        return render(request, 'profile.html', {'object':object, 'follow':follow, 'followed':followed, 'follower_count':follower_count,'followerd_count':followerd_count})
                 return render(request, 'profile.html', {'object':object, 'follow':follow, 'follower_count':follower_count,'followerd_count':followerd_count})
         follow = False
     return render(request, 'profile.html', {'object':object, 'follow':follow, 'follower_count':follower_count, 'followerd_count':followerd_count})
@@ -130,3 +135,10 @@ def unfollowfunc(request, username):
     alluser = CustomUser.objects.all()
     object = Follow.objects.filter(follower = request.user, followerd = alluser.filter(username = username)[0])[0].delete()
     return redirect('profile', username = username)
+
+@login_required
+def messagefunc(request, username):
+    alluser = CustomUser.objects.all()
+    object =  Message.objects.filter(Q(user_from = request.user, user_to = alluser.filter(username = username)[0]) \
+        | Q(user_to = request.user, user_from = alluser.filter(username = username)[0]))
+    return render(request, 'message.html', {'object':object})    

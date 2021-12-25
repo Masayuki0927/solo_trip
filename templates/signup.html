@@ -2,13 +2,43 @@
 
 {% block content %}
 
-<body class="text-center">
+<!-- <body class="text-center">
+    <main class="form-signin">
+      <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+      <form method="POST">
+        {% csrf_token %}
+        <div style=width:500px class="container">
+        <div class="form-floating">
+          <input type="username" class="form-control" id="floatingInput" placeholder="username">
+          <label for="floatingInput">username</label>
+        </div>
+        <div class="form-floating">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+          <label for="floatingPassword">Password</label>
+        </div>
+        </div>
+      </form>
+      <button type="submit">ユーザー登録</button>
+    </main>
+</body> -->
 
+
+<body class="text-center">
     <h1>Please sign in</h1>
     <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
+        <p>ユーザーネーム</p>
+        <p>{{ form.username }}</p>
+        <p>メールアドレス</p>
+        <p>{{ form.email }}</p>
+        <p>パスワード</p>
+        <p>{{ form.password1 }}</p>
+        <p>パスワードの確認</p>
+        <p>{{ form.password2 }}</p>
         <button type="submit">ユーザー登録</button>
     </form>
+    <p style=margin:20px ><a href="{% url 'login' %}">ログインはこちら</a></p>
 </body>
+
+
 {% endblock content %}

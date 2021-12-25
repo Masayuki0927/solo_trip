@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import homefunc, createfunc, detailfunc, signupfunc, loginfunc,\
-    logoutfunc, boardfunc, contentfunc, goodfunc, profilefunc, followfunc, unfollowfunc
+    logoutfunc, boardfunc, contentfunc, goodfunc, profilefunc, followfunc, unfollowfunc, \
+    messagefunc
 
 urlpatterns = [
     path('home/', homefunc, name='home'),
@@ -15,4 +16,5 @@ urlpatterns = [
     path('good/<int:pk>', goodfunc, name='good'),
     path('follow/<username>', followfunc, name='follow'),
     path('unfollow/<username>', unfollowfunc, name='unfollow'),
+    path('message/<username>', messagefunc, name='message'),
 ]
