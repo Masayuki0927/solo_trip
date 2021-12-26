@@ -11,11 +11,12 @@
 <div class="alert alert-success" role="alert">
 <p><a href="{% url 'profile' object.person %}" >{{ object.person }}</a></p>
 <p>{{ object.title }}</p>
+<p>{{ object.area }}</p>
 <p>{{ object.content }}</p>
 <a href="{% url 'good' object.pk %}" role="button" aria-pressed="true">いいねする</a>
 <!-- <p>{{ object.user_id }}</p> -->
 </div>
 
-<p><a href="{% url 'home'  %}">ホームに戻る</a></p>
+<a href="{{ 'https://travel.rakuten.co.jp/yado/'|add:object.area }}" target="_blank" rel="noopener noreferrer">付近のホテルを探す</a>
 
 {% endblock content %}

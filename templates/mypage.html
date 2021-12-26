@@ -1,19 +1,43 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="alert alert-success" role="alert">
+<div >
 <p><h1>{{ object.username }}</p></h1>
-<p>{{ object.email }}</p>
-<p>フォロー数：{{ follower_count }}</p>
-<p>フォロワー数：{{ followerd_count }}</p>
-<p><a href="{% url 'home' %}">ホームへ戻る</a></p>
+フォロー：{{ follower_count }} フォロワー：{{ followerd_count }}
 </div>
 
-{% for item in object.post_set.all %}
+<!-- {% for item in object.post_set.all %}
 <div class="alert alert-success" role="alert">
 <p><a href="{% url 'detail' item.pk %}">{{ item.title }}</a></p>
 <p>{{ item.content }}</p>
 </div>
-{% endfor %}
+{% endfor %} -->
+
+<div class="album py-5 bg-light">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for item in object.post_set.all %}
+        <div class="col">
+          <div class="card shadow-sm">
+            <img src="http://127.0.0.1:8000/medi/{{ item.post_image }}" width="300" height="200" >
+            <div class="card-body">
+              <!-- <p class="card-text"><b>{{ item.title }}</b></p> -->
+              <p><a href="{% url 'detail' item.pk %}"><b>{{ item.title }}</b></a></p>
+              <div class="content" style="height:80px;">
+              <p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;" class="card-text">{{ item.content }}</p>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-light" ><a href="{% url 'good' item.pk %}" style="text-decoration: none;">いいね{{ item.good }}</a></button>
+                </div>
+                <!-- <small class="text-muted">9 دقائق</small> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  </div>    
 
 {% endblock content %}

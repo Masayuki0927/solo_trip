@@ -5,9 +5,9 @@
 
 {% block content %}
 
-<div style="height: 150px; position:relative; background-image:url('../media/model/sea.jpeg'); " class = "container">
-<form style="position: absolute; top:50%; left: 50%;transform: translateY(-50%) translateX(-50%);" method="GET" action="">
-  <input type="search" size="30" name="keyword" style="height: 50px; border-radius:20px;"> 
+<div style="height: 100px; position:relative; background-image:url('../media/model/sea.jpeg'); " class = "container">
+<form style="position: absolute; top:50%; left: 50%;transform: translateY(-50%) translateX(-50%);" method="GET" action="{% url 'search' %}">
+  <input type="search" size="30" name="keyword" placeholder="過去の体験記を検索" > 
   <button type="submit">検索</button>
 </form>
 </div>    
@@ -16,13 +16,13 @@
       <div class="album py-5 bg-light">
         <div class="container">
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            {% for item in object %}
+            {% for item in object reversed %}
             <div class="col">
               <div class="card shadow-sm">
                 <img src="http://127.0.0.1:8000/medi/{{ item.post_image }}" width="300" height="200" >
                 <div class="card-body">
                   <!-- <p class="card-text"><b>{{ item.title }}</b></p> -->
-                  <p><a href="{% url 'detail' item.pk %}"><b>{{ item.title }}</b></a></p>
+                  <p><a href="{% url 'detail' item.pk %}"><b>{{ item.title }}</b></a>{{ item.created_date |date:"o/n/j" }}</p>
                   <div class="content" style="height:80px;">
                   <p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;" class="card-text">{{ item.content }}</p>
                   </div>

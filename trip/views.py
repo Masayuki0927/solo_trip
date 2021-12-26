@@ -7,6 +7,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 import datetime
 from django.db.models import Q
+import pandas as pd
+import requests
 
 def signupfunc(request):
     if request.method == "POST":
@@ -59,24 +61,38 @@ def profilefunc(request, username):
     return render(request, 'profile.html', {'object':object, 'follow':follow, 'follower_count':follower_count, 'followerd_count':followerd_count})
 
 
-@login_required
 def homefunc(request):
+    object = Post.objects.all()
+    # keyword = request.GET.get('keyword')
+    # if keyword:
+    #     object = object.filter(
+    #              Q(title__icontains=keyword) | Q(content__icontains=keyword)
+    #            )
+    return render(request, 'home.html', {'object':object})
+
+
+def searchfunc(request):
+    print('test')
     object = Post.objects.all()
     keyword = request.GET.get('keyword')
     if keyword:
         object = object.filter(
                  Q(title__icontains=keyword) | Q(content__icontains=keyword)
                )
-    return render(request, 'home.html', {'object':object})
+    return render(request, 'search.html', {'object':object})
+
 
 @login_required
 def createfunc(request):
     if request.method == "POST":
         form = PostForm(request.POST)
-        user = request.user.id
+        user = request.user
         if form.is_valid():
             object = form.save(commit=False)
-            # object.user_id = user
+            print(object.post_image)
+            # object.post_image = request.FILES['post_image']
+            object.person = user
+            object.created_date = datetime.datetime.now()
             object.save()
             return redirect('detail', pk=object.pk)
     else:
@@ -86,10 +102,42 @@ def createfunc(request):
 @login_required
 def detailfunc(request, pk):
     object = Post.objects.get(pk=pk)
+
+    # REQUEST_URL = "https://app.rakuten.co.jp/services/api/Travel/SimpleHotelSearch/20170426"
+    # APP_ID = "1089286695599073385"
+    # params = {
+    # "format":"json",
+    # "largeClassCode":"japan",
+    # "middleClassCode":"okinawa",
+    # "smallClassCode":"nahashi",
+    # "applicationId":APP_ID
+    # }  
+    # content = requests.get(REQUEST_URL, params).json()
+    # df = pd.DataFrame({'hotelName': [],'reviewAverage': [],'hotelInformationUrl': []},index=[])
+    # index=1
+    # for item in content['hotels']:
+    #     df.loc[index] = [
+    #                 item['hotel'][0]['hotelBasicInfo']['hotelName'],
+    #                 item['hotel'][0]['hotelBasicInfo']['reviewAverage'],
+    #                 item['hotel'][0]['hotelBasicInfo']['hotelInformationUrl']
+    #                 ]
+    #     index = index + 1
+    # hotels = df.sort_values('reviewAverage', ascending=False).head(5)
     return render(request, 'detail.html', {'object':object})
+
+
 
 @login_required
 def boardfunc(request):
+    object = Board.objects.all()
+    keyword = request.GET.get('keyword')
+    if keyword:
+        object = object.filter(title__icontains=keyword)
+    return render(request, 'board.html', {'object':object})
+
+
+@login_required
+def create_boardfunc(request):
     if request.method == "POST":
         form = BoardForm(request.POST)
         if form.is_valid():
@@ -100,13 +148,15 @@ def boardfunc(request):
     else:
         form = BoardForm()
         object = Board.objects.all()
-    return render(request, 'board.html', {'form': form, 'object':object})
+    return render(request, 'create_board.html', {'form': form, 'object':object})
+
 
 @login_required
 def contentfunc(request, pk):
-    board = Board.objects.get(pk=pk)
     object = Board_content.objects.all()
+    board = Board.objects.get(pk=pk)
     if request.method == "POST":
+        print("post")
         new = ContentForm(request.POST)
         form = ContentForm()
         if new.is_valid():
@@ -119,7 +169,8 @@ def contentfunc(request, pk):
             return render(request, 'content.html', {'new': new, 'board':board, 'object':object, 'form': form})
     else:
         form = ContentForm()
-    return render(request, 'content.html', {'form': form, 'board':board, 'object':object})
+        print("get")
+    return render(request, 'content.html', {'form': form, 'object':object ,'board':board})
 
 @login_required
 def goodfunc(request, pk):
