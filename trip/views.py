@@ -62,6 +62,11 @@ def profilefunc(request, username):
 @login_required
 def homefunc(request):
     object = Post.objects.all()
+    keyword = request.GET.get('keyword')
+    if keyword:
+        object = object.filter(
+                 Q(title__icontains=keyword) | Q(content__icontains=keyword)
+               )
     return render(request, 'home.html', {'object':object})
 
 @login_required

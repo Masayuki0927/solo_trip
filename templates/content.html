@@ -1,19 +1,23 @@
-<p>{{ board.title }}</p>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<p><h2>{{ board.title }}</h2></p>
 <p>{{ board.created_date }}</p>
 
-<h2>投稿</h2>
 <p><a href="{% url 'board' %}">掲示版トップへ戻る</a></p>
+新規投稿
 <form action ='', method="POST">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value='作成'>
 </form>
 
 {% for item in board.board_content_set.all %}
-
+<div class="alert alert-success" role="alert">
 <p>{{ item.text }}</p>
 <p>{{ item.created_date }}</p>
-
+</div>
 {% endfor %}
 
-<!-- <p>{{ new.text }}</p>
-<p>{{ new.created_date }}</p> -->
+{% endblock content %}
+

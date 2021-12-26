@@ -1,4 +1,8 @@
-<h2>掲示版を作成</h2>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>掲示版</h2>
 <form action ='', method="POST">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value='作成'>
@@ -7,8 +11,11 @@
 <p><a href="{% url 'home' %}">ホームへ戻る</a></p>
 
 {% for item in object %}
-
+<div class="alert alert-success" role="alert">
 <a href="{% url 'content' item.pk %}">{{ item.title }}</a>
 <p>{{ item.created_date }}</p>
+</div>
 
 {% endfor %}
+
+{% endblock content %}

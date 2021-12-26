@@ -15,6 +15,7 @@ class Post(models.Model):
     content = models.TextField()
     person = models.ForeignKey(get_user_model( ), on_delete=models.CASCADE, default=None, blank=True, null=True)
     good = models.IntegerField(default=0)
+    post_image = models.ImageField(upload_to = 'post/', blank=True, null=True, default='model/sea.jpeg')
 
     def __str__(self):
         return self.title
