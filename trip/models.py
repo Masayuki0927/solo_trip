@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
 from django.db.models.fields import TextField
+import uuid
 
 class CustomUser(AbstractUser):
 	age = models.CharField(max_length=10)
@@ -52,8 +53,18 @@ class Board_content(models.Model):
     def __str__(self):
         return self.text
 
-class Message(models.Model):
-    text = TextField()
-    created_date = models.DateTimeField()
+class Room(models.Model):
     user_from = models.ForeignKey(get_user_model( ), on_delete=models.CASCADE, related_name = 'message_from', blank=True, null=True)
     user_to = models.ForeignKey(get_user_model( ), on_delete=models.CASCADE, related_name = 'message_to' , blank=True, null=True) 
+    room_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    def __str__(self):
+        return self.user_to.username
+
+
+class Chat(models.Model):
+    text = TextField()
+    created_date = models.DateTimeField()
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, default=None, blank=True, null=True)
+    user = models.CharField(max_length=100)
+    def __str__(self):
+        return self.text

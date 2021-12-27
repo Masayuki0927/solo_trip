@@ -1,7 +1,7 @@
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
-from .models import Board, CustomUser, Message, Post, Board_content, Follow
-from .forms import PostForm, SignUpForm, BoardForm, ContentForm
+from .models import Board, CustomUser, Room, Post, Board_content, Follow, Chat
+from .forms import PostForm, SignUpForm, BoardForm, ContentForm, ChatForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -42,23 +42,43 @@ def logoutfunc(request):
 
 @login_required
 def profilefunc(request, username):
-    object = CustomUser.objects.filter(username__exact = username)[0]
-    follower_count = object.do_follow_user.all().count()
-    followerd_count = object.accept_follow_user.all().count()
-    if username == request.user.username:
-        return render(request, 'mypage.html', {'object':object, 'follower_count':follower_count, 'followerd_count':followerd_count})
+    if request.method == "POST":
+        selfuser = CustomUser.objects.filter(username = username)[0]
+        object = Room(user_from = request.user, user_to = selfuser)
+        # alldata = Room.objects.all()
+        # if object.user_from in  == xxx and object.user_to == xxx
+        object.save()
+        return render(request, 'chat.html', {})
     else:
-        user = request.user
-        for item in user.do_follow_user.all():
-            if username == item.followerd.username:
-                follow = True
-                for followitem in object.do_follow_user.all():
-                    if followitem.followerd == request.user:
-                        followed = True
-                        return render(request, 'profile.html', {'object':object, 'follow':follow, 'followed':followed, 'follower_count':follower_count,'followerd_count':followerd_count})
-                return render(request, 'profile.html', {'object':object, 'follow':follow, 'follower_count':follower_count,'followerd_count':followerd_count})
-        follow = False
+        object = CustomUser.objects.filter(username__exact = username)[0]
+        follower_count = object.do_follow_user.all().count()
+        followerd_count = object.accept_follow_user.all().count()
+        if username == request.user.username:
+            return render(request, 'mypage.html', {'object':object, 'follower_count':follower_count, 'followerd_count':followerd_count})
+        else:
+            user = request.user
+            for item in user.do_follow_user.all():
+                if username == item.followerd.username:
+                    follow = True
+                    for followitem in object.do_follow_user.all():
+                        if followitem.followerd == request.user:
+                            followed = True
+                            return render(request, 'profile.html', {'object':object, 'follow':follow, 'followed':followed, 'follower_count':follower_count,'followerd_count':followerd_count})
+                    return render(request, 'profile.html', {'object':object, 'follow':follow, 'follower_count':follower_count,'followerd_count':followerd_count})
+            follow = False
     return render(request, 'profile.html', {'object':object, 'follow':follow, 'follower_count':follower_count, 'followerd_count':followerd_count})
+
+@login_required
+def followuserfunc(request, username):
+    object = CustomUser.objects.filter(username = username)[0]
+    follower = object.do_follow_user.all()
+    return render(request, 'follow.html', {'follower':follower})
+
+@login_required
+def followeduserfunc(request, username):
+    object = CustomUser.objects.filter(username = username)[0]
+    followerd = object.accept_follow_user.all()
+    return render(request, 'followed.html', {'followerd':followerd})
 
 
 def homefunc(request):
@@ -193,8 +213,53 @@ def unfollowfunc(request, username):
     return redirect('profile', username = username)
 
 @login_required
-def messagefunc(request, username):
-    alluser = CustomUser.objects.all()
-    object =  Message.objects.filter(Q(user_from = request.user, user_to = alluser.filter(username = username)[0]) \
-        | Q(user_to = request.user, user_from = alluser.filter(username = username)[0]))
-    return render(request, 'message.html', {'object':object})    
+def roomfunc(request):
+    object =  Room.objects.filter(Q(user_from = request.user) | Q(user_to = request.user))
+    print(object[0].room_id)
+    return render(request, 'room.html', {'object':object})    
+
+@login_required
+def create_roomfunc(request):
+    # selfuser = CustomUser.objects.filter(username = username)
+    # object = Room(user_from = request.user, user_to = selfuser)
+    # object.save()
+    return render(request, 'chat.html', {})
+
+@login_required
+def chatfunc(request, room_id):
+    room_object =  Room.objects.filter(room_id = room_id)[0]
+    object =  Chat.objects.filter(room = room_object)
+    if request.method == "POST":
+        form = ChatForm()
+        new = ChatForm(request.POST)
+        if new.is_valid():
+            new = new.save(commit=False)
+            new.created_date = datetime.datetime.now()
+            new.room = room_object
+            new.user = request.user.username
+            new.save()
+            return render(request, 'chat.html', {'new': new, 'object':object, 'form': form})
+    else:
+        form = ChatForm()
+    return render(request, 'chat.html', {'form': form,'object':object})   
+
+
+# def contentfunc(request, pk):
+#     object = Board_content.objects.all()
+#     board = Board.objects.get(pk=pk)
+#     if request.method == "POST":
+#         print("post")
+#         new = ContentForm(request.POST)
+#         form = ContentForm()
+#         if new.is_valid():
+#             new = new.save(commit=False)
+#             new.created_date = datetime.datetime.now()
+#             new.board = board
+#             new.user = request.user
+#             new.save()
+#             print(board)
+#             return render(request, 'content.html', {'new': new, 'board':board, 'object':object, 'form': form})
+#     else:
+#         form = ContentForm()
+#         print("get")
+#     return render(request, 'content.html', {'form': form, 'object':object ,'board':board})

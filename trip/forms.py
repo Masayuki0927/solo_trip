@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Board, Board_content
+from .models import Chat, Post, Board, Board_content, Chat, Room
 from .models import CustomUser
 from django.contrib.auth.forms import UserCreationForm
 
@@ -8,6 +8,12 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ('title', 'content', 'post_image','area',)
+
+class RoomForm(forms.ModelForm):
+
+    class Meta:
+        model = Room
+        fields = ()
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(
@@ -30,4 +36,10 @@ class ContentForm(forms.ModelForm):
 
     class Meta:
         model = Board_content
+        fields = ('text', )
+
+class ChatForm(forms.ModelForm):
+
+    class Meta:
+        model = Chat
         fields = ('text', )
