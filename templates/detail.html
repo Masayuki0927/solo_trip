@@ -8,15 +8,21 @@
 
 {% block content %}
 
-<div class="alert alert-success" role="alert">
+{% if user.is_authenticated %}
 <p><a href="{% url 'profile' object.person %}" >{{ object.person }}</a></p>
-<p>{{ object.title }}</p>
-<p>{{ object.area }}</p>
+{% else %}
+<p>{{ object.person }}</p>
+{% endif %}
+<p>
+    <b>{{ object.title }}</b><span style="margin-left:10px ;">{{ object.created_date  }}</span>
+    <a href="{% url 'good' object.pk %}" role="button" aria-pressed="true">いいねする</a>
+</p>
+<p>エリア：{{ object.area }}</p>
 <p>{{ object.content }}</p>
-<a href="{% url 'good' object.pk %}" role="button" aria-pressed="true">いいねする</a>
 <!-- <p>{{ object.user_id }}</p> -->
-</div>
 
-<a href="{{ 'https://travel.rakuten.co.jp/yado/'|add:object.area }}" target="_blank" rel="noopener noreferrer">付近のホテルを探す</a>
+<!-- <a href="{{ 'https://travel.rakuten.co.jp/yado/'|add:object.area }}" target="_blank" rel="noopener noreferrer">付近のホテルを探す</a> -->
+
+<p><a href="{% url 'home' %}"><b>ホームに戻る</b></a></p>
 
 {% endblock content %}

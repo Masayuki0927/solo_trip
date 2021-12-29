@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import homefunc, createfunc, detailfunc, signupfunc, loginfunc,\
     logoutfunc, boardfunc, contentfunc, goodfunc, profilefunc, followfunc, unfollowfunc, \
-    roomfunc, searchfunc, create_boardfunc, chatfunc,create_roomfunc, followuserfunc, followeduserfunc
+    roomfunc, searchfunc, create_boardfunc, chatfunc,create_roomfunc, followuserfunc, followeduserfunc, \
+    deletefunc, updatefunc, tmpfunc
 
 urlpatterns = [
     path('home/', homefunc, name='home'),
@@ -20,8 +21,11 @@ urlpatterns = [
     path('room/', roomfunc, name='room'),
     path('search/', searchfunc, name='search'),
     path('create_room/', create_roomfunc, name='create_room'),
-    path('room/<room_id>', chatfunc, name='chat'),
+    path('chat/<room_id>', chatfunc, name='chat'),
     path('followuser/<username>', followuserfunc, name='followuser'),
     path('followeduser/<username>', followeduserfunc, name='followeduser'),
+    path('update/<int:pk>', updatefunc, name='update'),
+    path('delete/<int:pk>', deletefunc, name='delete'),
+    path('tmp/<int:pk>', tmpfunc, name='tmp'),
     # path('recommend/', recommendfunc, name='recommend'),
 ]

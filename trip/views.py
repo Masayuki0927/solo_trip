@@ -1,7 +1,7 @@
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from .models import Board, CustomUser, Room, Post, Board_content, Follow, Chat
-from .forms import PostForm, SignUpForm, BoardForm, ContentForm, ChatForm
+from .forms import PostForm, SignUpForm, BoardForm, ContentForm, ChatForm, RoomForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -21,7 +21,7 @@ def signupfunc(request):
             login(request, user)
             return redirect('home')
     else:
-        form = UserCreationForm()
+        form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
 
 def loginfunc(request):
@@ -43,12 +43,18 @@ def logoutfunc(request):
 @login_required
 def profilefunc(request, username):
     if request.method == "POST":
-        selfuser = CustomUser.objects.filter(username = username)[0]
-        object = Room(user_from = request.user, user_to = selfuser)
-        # alldata = Room.objects.all()
-        # if object.user_from in  == xxx and object.user_to == xxx
+        chatuser = CustomUser.objects.filter(username = username)[0]
+        roomobject =  Room.objects.filter(Q(user_from = request.user) | Q(user_to = request.user))
+        for item in roomobject:
+            if request.user == item.user_from:
+                if chatuser == item.user_to:
+                    return redirect('chat' ,  room_id = item.room_id)
+            if request.user == item.user_to:
+                if chatuser == item.user_from:            
+                    return redirect('chat' ,  room_id = item.room_id)
+        object = Room(user_from = request.user, user_to = chatuser)
         object.save()
-        return render(request, 'chat.html', {})
+        return redirect('chat' ,  room_id = object.room_id)
     else:
         object = CustomUser.objects.filter(username__exact = username)[0]
         follower_count = object.do_follow_user.all().count()
@@ -63,7 +69,8 @@ def profilefunc(request, username):
                     for followitem in object.do_follow_user.all():
                         if followitem.followerd == request.user:
                             followed = True
-                            return render(request, 'profile.html', {'object':object, 'follow':follow, 'followed':followed, 'follower_count':follower_count,'followerd_count':followerd_count})
+                            form = RoomForm()
+                            return render(request, 'profile.html', {'object':object, 'follow':follow, 'followed':followed, 'follower_count':follower_count,'followerd_count':followerd_count, 'form':form})
                     return render(request, 'profile.html', {'object':object, 'follow':follow, 'follower_count':follower_count,'followerd_count':followerd_count})
             follow = False
     return render(request, 'profile.html', {'object':object, 'follow':follow, 'follower_count':follower_count, 'followerd_count':followerd_count})
@@ -83,11 +90,6 @@ def followeduserfunc(request, username):
 
 def homefunc(request):
     object = Post.objects.all()
-    # keyword = request.GET.get('keyword')
-    # if keyword:
-    #     object = object.filter(
-    #              Q(title__icontains=keyword) | Q(content__icontains=keyword)
-    #            )
     return render(request, 'home.html', {'object':object})
 
 
@@ -120,34 +122,32 @@ def createfunc(request):
     return render(request, 'create.html', {'form': form})
 
 @login_required
+def deletefunc(request, pk):
+    object = Post.objects.get(pk=pk)
+    object.delete()
+    return redirect('profile', username = request.user.username)
+
+@login_required
+def updatefunc(request, pk):
+    object = Post.objects.get(pk=pk)
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=object)
+        if form.is_valid():
+            # form.save()
+            object = form.save(commit=True)
+            return redirect('detail', pk=object.pk)
+    else:
+        form = PostForm(instance=object)
+        return render(request, 'update.html', {'form': form, 'object': object})
+
+
 def detailfunc(request, pk):
     object = Post.objects.get(pk=pk)
 
-    # REQUEST_URL = "https://app.rakuten.co.jp/services/api/Travel/SimpleHotelSearch/20170426"
-    # APP_ID = "1089286695599073385"
-    # params = {
-    # "format":"json",
-    # "largeClassCode":"japan",
-    # "middleClassCode":"okinawa",
-    # "smallClassCode":"nahashi",
-    # "applicationId":APP_ID
-    # }  
-    # content = requests.get(REQUEST_URL, params).json()
-    # df = pd.DataFrame({'hotelName': [],'reviewAverage': [],'hotelInformationUrl': []},index=[])
-    # index=1
-    # for item in content['hotels']:
-    #     df.loc[index] = [
-    #                 item['hotel'][0]['hotelBasicInfo']['hotelName'],
-    #                 item['hotel'][0]['hotelBasicInfo']['reviewAverage'],
-    #                 item['hotel'][0]['hotelBasicInfo']['hotelInformationUrl']
-    #                 ]
-    #     index = index + 1
-    # hotels = df.sort_values('reviewAverage', ascending=False).head(5)
     return render(request, 'detail.html', {'object':object})
 
 
 
-@login_required
 def boardfunc(request):
     object = Board.objects.all()
     keyword = request.GET.get('keyword')
@@ -171,7 +171,6 @@ def create_boardfunc(request):
     return render(request, 'create_board.html', {'form': form, 'object':object})
 
 
-@login_required
 def contentfunc(request, pk):
     object = Board_content.objects.all()
     board = Board.objects.get(pk=pk)
@@ -192,12 +191,13 @@ def contentfunc(request, pk):
         print("get")
     return render(request, 'content.html', {'form': form, 'object':object ,'board':board})
 
-@login_required
+
 def goodfunc(request, pk):
+    print(request)
     object = Post.objects.get(pk=pk)
     object.good =  object.good + 1
     object.save()
-    return redirect('home')
+    return HttpResponse('いいね完了')
 
 @login_required
 def followfunc(request, username):
@@ -215,12 +215,16 @@ def unfollowfunc(request, username):
 @login_required
 def roomfunc(request):
     object =  Room.objects.filter(Q(user_from = request.user) | Q(user_to = request.user))
-    print(object[0].room_id)
     return render(request, 'room.html', {'object':object})    
 
 @login_required
 def create_roomfunc(request):
     # selfuser = CustomUser.objects.filter(username = username)
+    # object = Room(user_from = request.user, user_to = selfuser)
+    # object.save()
+    form = RoomForm(request.POST)
+    print(form)
+    # selfuser = CustomUser.objects.filter(username = username)[0]
     # object = Room(user_from = request.user, user_to = selfuser)
     # object.save()
     return render(request, 'chat.html', {})
@@ -243,6 +247,10 @@ def chatfunc(request, room_id):
         form = ChatForm()
     return render(request, 'chat.html', {'form': form,'object':object})   
 
+
+def tmpfunc(request, pk):
+    object = Room.objects.get(pk = pk)
+    return redirect('chat', room_id = object.room_id)
 
 # def contentfunc(request, pk):
 #     object = Board_content.objects.all()

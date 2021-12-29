@@ -7,10 +7,11 @@
 
 <div style="height: 100px; position:relative; background-image:url('../media/model/sea.jpeg'); " class = "container">
 <form style="position: absolute; top:50%; left: 50%;transform: translateY(-50%) translateX(-50%);" method="GET" action="">
-  <input type="search" size="30" name="keyword" style="height: 50px; border-radius:20px;"> 
+  <input type="search" size="30" name="keyword"> 
   <button type="submit">検索</button>
 </form>
 </div>    
+<p><a href="{% url 'home' %}"><b>ホームに戻る</b></a></p>
 
     <main>
       <div class = "result" style="height: 20px; width: 100%;">検索結果</div>

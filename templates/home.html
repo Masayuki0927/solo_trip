@@ -22,7 +22,7 @@
                 <img src="http://127.0.0.1:8000/medi/{{ item.post_image }}" width="100%" height="225">
                 <div class="card-body">
                   <!-- <p class="card-text"><b>{{ item.title }}</b></p> -->
-                  <p><a href="{% url 'detail' item.pk %}"><b>{{ item.title }}</b></a>{{ item.person.username }}{{ item.created_date |date:"o/n/j" }}</p>
+                  <p><a href="{% url 'detail' item.pk %}"><b>{{ item.title }}</b></a><span style="margin-left:10px ;">{{ item.person.username }}</span><span style="margin-left:10px ;">{{ item.created_date |date:"o/n/j" }}</span></p>
                   <div class="content" style="height:80px;">
                   <p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;" class="card-text">{{ item.content }}</p>
                   </div>

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>編集</h2>
+<form action ='', method="POST" enctype="multipart/form-data">{% csrf_token %}
+
+<div class="form-group">
+    <label class="control-label">タイトル</label>
+    <p>{{form.title}}</p>
+</div>
+
+<div class="form-group">
+    <label class="control-label">場所</label>
+    <p>{{form.area}}</p>
+</div>
+
+<div class="form-group">
+    <label class="control-label">コンテンツ</label>
+    <p>{{form.content}}</p>
+</div>
+
+<div class="form-group">
+    <label class="control-label">トップ写真</label>
+    <p>{{form.post_image}}</p>
+</div>
+
+<input style="margin-top:20px;" type="submit" value='編集完了する'>
+
+</form>
+
+{% endblock content %}

@@ -3,7 +3,8 @@
 
 <div >
 <p><h1>{{ object.username }}</p></h1>
-フォロー：{{ follower_count }} フォロワー：{{ followerd_count }}
+<p><a href="{% url 'followuser' object.username %}">フォロー数：{{ follower_count }}</p></a>
+<p><a href="{% url 'followeduser' object.username %}">フォロワー数：{{ followerd_count }}</p></a>
 </div>
 
 <!-- {% for item in object.post_set.all %}
@@ -19,16 +20,22 @@
         {% for item in object.post_set.all %}
         <div class="col">
           <div class="card shadow-sm">
-            <img src="http://127.0.0.1:8000/medi/{{ item.post_image }}" width="300" height="200" >
+            <img src="http://127.0.0.1:8000/medi/{{ item.post_image }}" width="100%" height="225" >
             <div class="card-body">
               <!-- <p class="card-text"><b>{{ item.title }}</b></p> -->
-              <p><a href="{% url 'detail' item.pk %}"><b>{{ item.title }}</b></a></p>
+              <p><a href="{% url 'detail' item.pk %}"><b>{{ item.title }}</b></a><span style="margin-left:10px ;">{{ item.person.username }}</span><span style="margin-left:10px ;">{{ item.created_date |date:"o/n/j" }}</span></p>
               <div class="content" style="height:80px;">
               <p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;" class="card-text">{{ item.content }}</p>
               </div>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                   <button type="button" class="btn btn-light" ><a href="{% url 'good' item.pk %}" style="text-decoration: none;">いいね{{ item.good }}</a></button>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-light" ><a href="{% url 'update' item.pk %}">編集する</a></button>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-light" ><a href="{% url 'delete' item.pk %}">削除する</a></button>
                 </div>
                 <!-- <small class="text-muted">9 دقائق</small> -->
               </div>
@@ -38,6 +45,6 @@
       {% endfor %}
       </div>
     </div>
-  </div>    
+</div>    
 
 {% endblock content %}

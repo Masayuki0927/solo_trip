@@ -14,7 +14,6 @@ class Follow(models.Model):
 class Post(models.Model):
     area_spot = (
         ('hokkaido', '北海道'),
-        ('okinawa', '沖縄'),
         ('東北', '東北'),
         ('関東', '関東'),
         ('東海', '東海'),
@@ -22,6 +21,7 @@ class Post(models.Model):
         ('近畿', '近畿'),
         ('山陽・山陰', '山陽・山陰'),
         ('四国', '四国'),
+        ('okinawa', '沖縄'),
         ('海外', '海外'),
     )
 
